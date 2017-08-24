@@ -19,7 +19,10 @@ import io.github.vzer.factory.presenter.account.RetrivePresenter;
 
 public class AccountHelper {
 
-    public static void login(LoginModel model, final DataCallback.Callback<User> callback) {
+    /**
+     * 登录请求
+     */
+    public static void login(LoginModel model, final DataCallback.Callback callback) {
         // TODO: 2017/7/25 网络请求加载
         NetWork.getService().login(model).enqueue(new ResponseCallback<AccountRspModel>(new ResponseCallback.DataCallback() {
             @Override
@@ -33,6 +36,7 @@ public class AccountHelper {
 //                user.setName("未设置");
 //                user.setRealName(null);
 //                user.setToken("u5fjgh9f6hfd21bduik8723d8ty");
+                //用户信息持久化
                 Account.login(user);
                 callback.onDataLoaded(user);
             }
@@ -45,10 +49,20 @@ public class AccountHelper {
     }
 
     /**
-     * 注册
+     * 注册请求
      */
-    public static void register(RegisterModel model, RegisterPresenter registerPresenter) {
+    public static void register(final RegisterModel model, final DataCallback.Callback callback) {
+        NetWork.getService().register(model).enqueue(new ResponseCallback<AccountRspModel>(new ResponseCallback.DataCallback() {
+            @Override
+            public void onDataSuccess(Object data) {
+                callback.onDataLoaded(null);
+            }
 
+            @Override
+            public void onDataFailed(int errorCode) {
+                callback.onFailedLoaded(errorCode);
+            }
+        }));
     }
 
     /**

@@ -1,6 +1,7 @@
 package io.github.vzer.factory.network;
 
 import android.support.annotation.NonNull;
+import android.support.annotation.StringRes;
 import android.support.design.widget.TabLayout;
 import android.text.TextUtils;
 
@@ -36,13 +37,13 @@ public class ResponseCallback<T> implements Callback<RspModel<T>> {
             if (response.body().getCode() == RspCode.SUCCEED) {
                 if (onDataCallback != null) {
                     onDataCallback.onDataSuccess(response.body().getData());
-                }
+            }
             } else {
                 GlobalAPIErrorHandler.handle(response.body().getCode());
-                onDataCallback.onDataFailed(response.body().getCode());
+                onDataCallback.onDataFailed(R.string.empty);
             }
         } else {
-            onDataCallback.onDataFailed(response.raw().code());
+            onDataCallback.onDataFailed(R.string.empty);
             GlobalAPIErrorHandler.handle(response.raw().code());
         }
     }
@@ -50,20 +51,21 @@ public class ResponseCallback<T> implements Callback<RspModel<T>> {
     //失败时回调(解析错误时的处理)
     @Override
     public void onFailure(Call<RspModel<T>> call, Throwable t) {
+        int id ;
         if (t instanceof ResultException) {
             if (TextUtils.isEmpty(((ResultException) t).getMsg())) {
                 GlobalAPIErrorHandler.handle(((ResultException) t).getCode());
             } else {
                 ToastUtil.showToast(((ResultException) t).getMsg(), ((ResultException) t).getCode());
             }
-            onDataCallback.onDataFailed(((ResultException) t).getCode());
+            onDataCallback.onDataFailed(R.string.empty);
         } else if (t instanceof ConnectException) {
-            // TODO: 17/8/21 网络连接错误 
+            // TODO: 17/8/21 网络连接错误
             ToastUtil.showToast(R.string.data_network_error + t.getMessage());
-            onDataCallback.onDataFailed(-1);
+            onDataCallback.onDataFailed(R.string.empty);
         } else {
             ToastUtil.showToast(t.getMessage());
-            onDataCallback.onDataFailed(-1);
+            onDataCallback.onDataFailed(R.string.empty);
         }
     }
 
@@ -75,7 +77,7 @@ public class ResponseCallback<T> implements Callback<RspModel<T>> {
         void onDataSuccess(T data);
 
         //数据加载失败时回调
-        void onDataFailed(int errorCode);
+        void onDataFailed(@StringRes int errorCode);
     }
 }
 

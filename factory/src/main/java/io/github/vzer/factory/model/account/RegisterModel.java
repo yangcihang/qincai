@@ -1,29 +1,33 @@
 package io.github.vzer.factory.model.account;
 
 /**
- * 用户注册model
+ * 用户注册 请求model
  * @author: Vzer.
  * @date: 2017/7/25. 20:58
  * @email: vzer@qq.com
  */
 
 public class RegisterModel {
-    private String phone; //手机号
+    private String mobile; //手机号
     private String password; //密码
-    private String code; //验证码
+    //private String code; //验证码， 后需添加
+    private String  name;//昵称
+    private String real_name;//真实姓名
+    private Integer sex;//性别
+    private Integer credits;//信用积分
 
-    public RegisterModel(String phone, String password, String code) {
-        this.phone = phone;
+    public RegisterModel(String phone, String password) {
+        this.mobile = phone;
         this.password = password;
-        this.code = code;
+        this.name = phone;//默认昵称为手机号
     }
 
-    public String getPhone() {
-        return phone;
+    public String getMobile() {
+        return mobile;
     }
 
-    public void setPhone(String phone) {
-        this.phone = phone;
+    public void setMobile(String mobile) {
+        this.mobile = mobile;
     }
 
     public String getPassword() {
@@ -34,20 +38,7 @@ public class RegisterModel {
         this.password = password;
     }
 
-    public String getCode() {
-        return code;
-    }
 
-    public void setCode(String code) {
-        this.code = code;
-    }
 
-    @Override
-    public String toString() {
-        return "RegisterModel{" +
-                "phone='" + phone + '\'' +
-                ", password='" + password + '\'' +
-                ", code='" + code + '\'' +
-                '}';
-    }
+
 }

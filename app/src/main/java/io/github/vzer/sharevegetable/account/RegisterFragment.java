@@ -82,8 +82,6 @@ public class RegisterFragment extends FragmentPresenter<RegisterContract.Present
         String password = passwordEdit.getText().toString();
         String verify = verifyEdit.getText().toString();
         String rePassword = rePasswordEdit.getText().toString();
-        Handler handler;
-        handler.sendMessage()
         //通知P层进行注册
         mPresenter.register(phone, password, rePassword, verify);
     }
@@ -189,8 +187,9 @@ public class RegisterFragment extends FragmentPresenter<RegisterContract.Present
             } else getVerifyBtn.setEnabled(true);
         }
         //设置重置Btn 能否点击
+        // TODO: 2017/8/24 加入验证码判断
         if (phoneEdit.getText().toString().isEmpty() ||
-                verifyEdit.getText().toString().isEmpty() ||
+               /* verifyEdit.getText().toString().isEmpty() ||*/ //验证码暂时不用判断
                 passwordEdit.getText().toString().isEmpty() ||
                 rePasswordEdit.getText().toString().isEmpty()) {
             submitBtn.setEnabled(false);

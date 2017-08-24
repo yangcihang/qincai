@@ -85,6 +85,7 @@ public class ShoppingManager {
     public int sub(VegetableModel model) {
         int count = model.getCount();
         count--;
+        if (count<0)return 0;
         if (count == 0) shoppingMap.remove(model.getpId());
         total--;
         model.setCount(count);

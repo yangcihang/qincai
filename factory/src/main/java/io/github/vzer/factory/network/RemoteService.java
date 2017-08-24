@@ -2,6 +2,7 @@ package io.github.vzer.factory.network;
 
 import io.github.vzer.factory.model.account.AccountRspModel;
 import io.github.vzer.factory.model.account.LoginModel;
+import io.github.vzer.factory.model.account.RegisterModel;
 import io.github.vzer.factory.model.mine.coupon.CouponModel;
 import io.github.vzer.factory.model.mine.coupon.CouponResponse;
 import io.github.vzer.factory.model.mine.wallet.UserWalletOrderModel;
@@ -33,6 +34,9 @@ public interface RemoteService {
     // TODO: 2017/7/26 后端给接口
     @POST("user/login")
     Call<RspModel<AccountRspModel>> login(@Body LoginModel model);
+
+    @POST("user")
+    Call<RspModel<AccountRspModel>> register(@Body RegisterModel model);
 
     @GET("user/trade/list")
     Call<RspModel<UserWalletOrderResponse>> requestAllWalletOrder(@Query("page") int pageId, @Query("rows") int rowsId);

@@ -4,6 +4,7 @@ import io.github.vzer.common.factory.data.DataCallback;
 import io.github.vzer.common.factory.presenter.BasePresenter;
 import io.github.vzer.factory.R;
 import io.github.vzer.factory.data.AccountHelper;
+import io.github.vzer.factory.model.account.LoginModel;
 import io.github.vzer.factory.model.account.RegisterModel;
 import io.github.vzer.factory.model.db.User;
 import io.github.vzer.factory.utils.ToastUtil;
@@ -41,10 +42,12 @@ public class RegisterPresenter extends BasePresenter<RegisterContract.View>
         if (!RegexUtil.checkMobile(phone)) {
             //提示
             view.showError(R.string.data_account_register_invalid_parameter_mobile);
-        } else if (code.length() < 4) {
-            //验证码大于4位
+        }
+        // TODO: 2017/8/24 验证码上线添加接口
+        /*else if (code.length() < 4) {
+            //验证码4位
             view.showError(R.string.data_account_register_invalid_parameter_code);
-        } else if (!password.equals(rePassword)) {
+        } */else if (!password.equals(rePassword)) {
             //俩次输入的密码不一致
             view.showError(R.string.data_account_register_invalid_parameter_repassword);
         } else if (password.length() < 6) {
@@ -52,14 +55,16 @@ public class RegisterPresenter extends BasePresenter<RegisterContract.View>
             view.showError(R.string.data_account_register_invalid_parameter_password);
         } else {
             //对数据进行封装
-            RegisterModel model = new RegisterModel(phone, password, code);
+           model = new RegisterModel(phone, password);
             //传递给Model层,进行注册操作
             AccountHelper.register(model, this);
         }
     }
+    RegisterModel model;
 
     @Override
     public void postVerify(String phone) {
+        mView.showError(R.string.error_verify);
         AccountHelper.postVerify(phone);
     }
 
@@ -71,10 +76,16 @@ public class RegisterPresenter extends BasePresenter<RegisterContract.View>
     @Override
     public void onDataLoaded(User user) {
         RegisterContract.View view = mView;
-        if (view == null) return;
+        //注册后进行登录操作
+        if (user==null) {
+            //对数据进行封装,进行登录操作
+            LoginModel loginModel = new LoginModel(model.getMobile(), model.getPassword());
+            AccountHelper.login(loginModel, this);
+        }else {
+            if (view == null) return;
+            view.registerSuccess();
+        }
 
-        //通知注册成功
-        //view.registerSuccess();
     }
 
     /**
@@ -87,9 +98,7 @@ public class RegisterPresenter extends BasePresenter<RegisterContract.View>
         //拿到V层,V层不存在,不做任何操作;
         RegisterContract.View view = mView;
         if (view == null) return;
-
-        //提示错误信息
-        ToastUtil.showToast(error);
+        mView.showError(error);
     }
 
 

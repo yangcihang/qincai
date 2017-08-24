@@ -25,6 +25,8 @@ public final class ToastUtil {
     }
 
     public static void showToast(@StringRes final int resId) {
+        if (resId == io.github.vzer.common.R.string.empty) return;
+
         Utility.runOnUiThread(new Runnable() {
             @Override
             public void run() {

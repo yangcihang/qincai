@@ -44,6 +44,7 @@ public class RetrivePresenter extends BasePresenter<RetriveContract.View>
     @Override
     public void resetPassword(String phone, String password, String rePassword, String code) {
 
+        // TODO: 2017/8/24  网络接口对接
         start();//P层开始工作
         //得到view接口
         final RetriveContract.View view =mView;
@@ -62,7 +63,7 @@ public class RetrivePresenter extends BasePresenter<RetriveContract.View>
             view.showError(R.string.data_account_register_invalid_parameter_password);
         } else {
             //对数据进行封装
-            RegisterModel model = new RegisterModel(phone, password, code);
+            RegisterModel model = new RegisterModel(phone, password);
             //传递给Model层,进行注册操作
             AccountHelper.resetPassword(model, this);
         }
@@ -84,7 +85,6 @@ public class RetrivePresenter extends BasePresenter<RetriveContract.View>
         RetriveContract.View view = mView;
         if (view == null) return;
         //加载失败,提示错误信息
-        ToastUtil.showToast(error);
         mView.showError(error);
     }
 }

@@ -1,7 +1,10 @@
 package io.github.vzer.common.app;
 
 import android.content.Context;
+import android.text.TextUtils;
+import android.widget.Toast;
 
+import io.github.vzer.common.R;
 import io.github.vzer.common.factory.presenter.BaseContract;
 
 /**
@@ -38,7 +41,6 @@ public abstract class FragmentPresenter<Presenter extends BaseContract.Presenter
      */
     @Override
     public void showError(int strId) {
-
     }
 
     /**
