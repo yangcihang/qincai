@@ -8,11 +8,6 @@ package io.github.vzer.factory.constant;
  * @email: vzer@qq.com
  */
 public class CommonConstant {
-
     //基础网络请求地址
-    public static final String API_URL = " http://192.168.1.217:3010/";
-
-
-
-
+    public static final String API_URL = " http://192.168.1.221:3010/";
 }

@@ -28,7 +28,7 @@ public class TimeUtil {
     /**
      * 默认时间格式
      */
-    public static final String TIME_DEFAULT_FORMAT = "HH:mm:ss";
+    public static final String TIME_DEFAULT_FORMAT = "yyyy-MM-dd HH:mm";
 
     /**
      * 获取系统当前时间

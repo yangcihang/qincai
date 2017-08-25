@@ -187,7 +187,8 @@ public class FirmOrderActivity extends ToolbarActivityPresenter<FirmOrderContrac
         if (!TextUtils.isEmpty(remarkStr)) {
             remarkTxt.setText(remarkStr);
         } else {
-            remarkTxt.setText(getResources().getString(R.string.remark));
+            // TODO: 17/8/24 bug
+            //remarkTxt.setText(getResources().getString(R.string.remark));
         }
     }
 

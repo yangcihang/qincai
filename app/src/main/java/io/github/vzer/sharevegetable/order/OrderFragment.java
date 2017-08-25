@@ -85,7 +85,7 @@
 //     * @param orderDetailModelList dataSource
 //     */
 //    @Override
-//    public void loadOrderDetailListSuccess(List<OrderDetailModel> orderDetailModelList) {
+//    public void loadOrderListSuccess(List<OrderDetailModel> orderDetailModelList) {
 //        // TODO: 17/8/4 加载adapter，刷新数据源
 //    }
 //
@@ -127,6 +127,7 @@ import java.util.List;
 import butterknife.BindView;
 import io.github.vzer.common.app.FragmentPresenter;
 import io.github.vzer.factory.model.order.OrderDetailModel;
+import io.github.vzer.factory.model.order.OrderModel;
 import io.github.vzer.factory.presenter.order.OrderContract;
 import io.github.vzer.factory.presenter.order.OrderPresenter;
 import io.github.vzer.sharevegetable.R;
@@ -183,7 +184,12 @@ public class OrderFragment extends FragmentPresenter<OrderContract.Presenter> im
     }
 
     @Override
-    public void loadOrderDetailListSuccess(List<OrderDetailModel> orderDetailModelList) {
+    public void loadOrderListSuccess(List<OrderModel> orderDetailModelList, boolean isLastPage) {
+
+    }
+
+    @Override
+    public void loadOrderListFailed() {
 
     }
 }

@@ -9,6 +9,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
@@ -19,17 +20,19 @@ import butterknife.BindView;
 import butterknife.OnClick;
 import io.github.vzer.common.app.ToolbarActivityPresenter;
 import io.github.vzer.common.widget.ScreenUtil;
-import io.github.vzer.factory.model.db.Vegetable;
+import io.github.vzer.factory.constant.KeyConstant;
 import io.github.vzer.factory.model.order.OrderDetailModel;
-import io.github.vzer.factory.presenter.order.OrderContract;
-import io.github.vzer.factory.presenter.order.OrderPresenter;
+import io.github.vzer.factory.model.order.OrderDetailVegetableModel;
+import io.github.vzer.factory.presenter.order.OrderDetailContract;
+import io.github.vzer.factory.presenter.order.OrderDetailPresenter;
+import io.github.vzer.factory.utils.TimeUtil;
 import io.github.vzer.factory.utils.ToastUtil;
 import io.github.vzer.sharevegetable.R;
 import io.github.vzer.sharevegetable.order.adapter.OrderDetailListAdapter;
 import io.github.vzer.sharevegetable.widget.NoTouchRecyclerView;
 
-public class OrderDetailActivity extends ToolbarActivityPresenter<OrderContract.Presenter>
-        implements OrderContract.View {
+public class OrderDetailActivity extends ToolbarActivityPresenter<OrderDetailContract.Presenter>
+        implements OrderDetailContract.View {
 
     @BindView(R.id.rec_order_detail)
     NoTouchRecyclerView orderDetailRec;
@@ -57,21 +60,40 @@ public class OrderDetailActivity extends ToolbarActivityPresenter<OrderContract.
     Button cancelBtn;
     @BindView(R.id.btn_to_pay)
     Button payBtn;
+    @BindView(R.id.ly_payment_state)
+    RelativeLayout paymentStateLy;
+
     private OrderDetailListAdapter adapter;
-    private List<Vegetable> list;
+    private List<OrderDetailVegetableModel> list;
     private OrderDetailModel orderDetailModel; //订单
     private LinearLayoutManager manager;
+    private int type;
 
+    /**
+     * 静态启动
+     */
+    public static void start(Context context, String orderId, int type) {
+        Intent intent = new Intent(context, OrderDetailActivity.class);
+        intent.putExtra(KeyConstant.KEY_ORDER_ID, orderId);
+        intent.putExtra(KeyConstant.KEY_ORDER_TYPE, type);
+        context.startActivity(intent);
+    }
+
+    /**
+     * 初始化数据，做网络加载
+     */
     @Override
     protected void initData() {
-
+        String orderId = getIntent().getStringExtra(KeyConstant.KEY_ORDER_ID);
+        type = getIntent().getIntExtra(KeyConstant.KEY_ORDER_TYPE, -1);
+        mPresenter.requestOrderDetail(orderId, type);
     }
 
     @Override
     public void initWidget() {
         setActivityTitle(getResources().getString(R.string.title_order_detail));
-        initList();
-        // TODO: 17/8/9 其他控件的内容初始化 
+
+
     }
 
     @Override
@@ -88,22 +110,45 @@ public class OrderDetailActivity extends ToolbarActivityPresenter<OrderContract.
      * 初始化list
      */
     private void initList() {
-        // TODO: 17/8/4 从intent获取订单信息
-//        orderDetailModel = (OrderDetailModel) getIntent().getSerializableExtra(KeyConstant.KEY_ORDER_DETAIL);
-//        list = orderDetailModel.getpList();
         list = new ArrayList<>();
-        for (int i = 0; i < 10; i++) {
-            list.add(new Vegetable());
-        }
+        list = orderDetailModel.getProductList();
         adapter = new OrderDetailListAdapter(this, list);
         orderDetailRec.setAdapter(adapter);
         manager = new LinearLayoutManager(this);
-
         orderDetailRec.setLayoutManager(manager);
         LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) orderDetailRec.getLayoutParams();
+        // TODO: 17/8/24 用更优雅的办法
         params.height = ScreenUtil.dip2px(56) * adapter.getItemCount(); //计算rec高度，避免滑动
         orderDetailRec.setLayoutParams(params);
         orderDetailRec.setFocusable(false);
+    }
+
+    /**
+     * 初始化视图
+     */
+    private void initView() {
+        switch (type) {
+            case OrderDetailModel.STATE_SUBMIT:
+                paymentStateTxt.setText("去支付");
+                paymentStateLy.setVisibility(View.VISIBLE);
+
+                break;
+            case OrderDetailModel.STATE_DISTRIBUTE:
+                paymentStateTxt.setText("待配送");
+                paymentStateLy.setVisibility(View.GONE);
+                describeStateTxt.setVisibility(View.VISIBLE);
+                break;
+            case OrderDetailModel.STATE_FINISH:
+                paymentStateTxt.setText("已完成");
+                paymentStateLy.setVisibility(View.GONE);
+                toDiscussBtn.setVisibility(View.VISIBLE);
+                break;
+        }
+        orderNumTxt.setText(orderDetailModel.getOrderId());
+        orderMoneyTxt.setText("￥" + String.valueOf(orderDetailModel.getTotal()));
+        describeTxt.setText(orderDetailModel.getAddOn());
+        String orderTime = TimeUtil.setStampToString(orderDetailModel.getCreatedAt(),TimeUtil.DATETIME_DEFAULT_FORMAT);
+        orderTimeTxt.setText(orderTime);
     }
 
     /**
@@ -123,7 +168,7 @@ public class OrderDetailActivity extends ToolbarActivityPresenter<OrderContract.
     @OnClick(R.id.btn_to_discuss)
     void toDiscuss() {
         if (toDiscussBtn.getVisibility() == View.VISIBLE) {
-            // TODO: 17/8/7 跳转到去评价界面
+            startActivity(new Intent(this, DiscussActivity.class));
         }
     }
 
@@ -160,9 +205,30 @@ public class OrderDetailActivity extends ToolbarActivityPresenter<OrderContract.
     }
 
 
+    /**
+     * 加载订单列表成功时回调
+     */
     @Override
-    public OrderContract.Presenter initPresenter() {
-        return new OrderPresenter(this);
+    public void loadOrderListSuccess(OrderDetailModel detailModel) {
+        //异步返回成功
+        this.orderDetailModel = detailModel;
+        initList();
+        initView();
+    }
+
+
+    /**
+     * 加载订单列表失败时回调
+     */
+    @Override
+    public void loadOrderListFailed() {
+        // TODO: 17/8/23 数据加载失败时回调
+    }
+
+
+    @Override
+    public OrderDetailContract.Presenter initPresenter() {
+        return new OrderDetailPresenter(this);
     }
 
     @Override
@@ -174,10 +240,4 @@ public class OrderDetailActivity extends ToolbarActivityPresenter<OrderContract.
     public void showLoading() {
 
     }
-
-    @Override
-    public void loadOrderDetailListSuccess(List<OrderDetailModel> orderDetailModelList) {
-
-    }
-
 }

@@ -85,7 +85,7 @@
     <string name="title_remark">订单备注</string>
     <string name="text_click_to_unlock">点击开锁</string>
     <string name="text_click_to_lock">开锁中</string>
-    <string name="remark">备注</string>
+    <string name="addOn">备注</string>
     <string name="text_mine_user_avatar">头像</string>
     <string name="shopping_empty">购物车空空如已~~</string>
     <string name="firm_pay_msg">支付信息</string>
@@ -106,4 +106,5 @@
     <string name="text_wallet_order_type_withdraw">提现</string>
     <string name="text_wallet_order_type_refunds">退货</string>
     <string name="text_wallet_order_type_gift_recharge">礼品卡充值</string>
+    <string name="text_default_location">订单将配送至东北大学秦皇岛分校</string>
 </resources>

@@ -28,37 +28,15 @@
         android:textColor="@color/text_primary"/>
 
     <TextView
-        android:id="@+id/txt_create_title"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/txt_order_title"
-        android:layout_marginTop="5dp"
-        android:text="@string/text_order_item_create_time"
-        android:textColor="@color/text_secondary"
-        android:textSize="@dimen/font_8"/>
-
-    <TextView
-        android:id="@+id/txt_order_create_time"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/txt_order_number"
-        android:layout_marginLeft="@dimen/len_2"
-        android:layout_marginTop="5dp"
-        android:layout_toRightOf="@id/txt_create_title"
-        android:text="2017-05-15 12:30"
-        android:textColor="@color/text_secondary"
-        android:textSize="@dimen/font_8"
-        />
-
-    <TextView
         android:id="@+id/txt_product_list"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/txt_create_title"
+        android:layout_below="@id/txt_order_number"
         android:layout_marginTop="@dimen/len_8"
         android:text="订购了苹果、香蕉、黄瓜等8种商品"
         android:textColor="@color/text_primary"
         android:textSize="@dimen/font_12"/>
+
 
     <TextView
         android:id="@+id/txt_product_money"
@@ -69,7 +47,7 @@
         android:layout_marginLeft="@dimen/len_96"
         android:layout_toRightOf="@id/txt_product_list"
         android:gravity="right"
-        android:text="$6"
+        android:text="6"
         android:textColor="@color/text_money"
         android:textSize="@dimen/font_24"/>
 

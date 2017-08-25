@@ -10,6 +10,7 @@ import java.util.List;
 import butterknife.BindView;
 import io.github.vzer.common.widget.recycler.RecyclerViewAdapter;
 import io.github.vzer.factory.model.db.Vegetable;
+import io.github.vzer.factory.model.order.OrderDetailVegetableModel;
 import io.github.vzer.sharevegetable.R;
 
 /**
@@ -18,19 +19,19 @@ import io.github.vzer.sharevegetable.R;
  * email yangcihang@hrsoft.net
  */
 
-public class OrderDetailListAdapter extends RecyclerViewAdapter<Vegetable> {
+public class OrderDetailListAdapter extends RecyclerViewAdapter<OrderDetailVegetableModel> {
 
-    public OrderDetailListAdapter(Context context, List<Vegetable> vegetables) {
+    public OrderDetailListAdapter(Context context, List<OrderDetailVegetableModel> vegetables) {
         super(context, vegetables);
     }
 
     @Override
-    public ViewHolder<Vegetable> onCreateViewHolder(ViewGroup parent, int viewType) {
+    public ViewHolder<OrderDetailVegetableModel> onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = inflater.inflate(R.layout.item_rec_order_detail, parent, false);
         return new ItemViewHolder(view);
     }
 
-    class ItemViewHolder extends ViewHolder<Vegetable> {
+    class ItemViewHolder extends ViewHolder<OrderDetailVegetableModel> {
         @BindView(R.id.txt_vegetable_money)
         TextView moneyTxt;
         @BindView(R.id.txt_vegetable_num)
@@ -43,7 +44,10 @@ public class OrderDetailListAdapter extends RecyclerViewAdapter<Vegetable> {
         }
 
         @Override
-        protected void onBind(Vegetable vegetable) {
+        protected void onBind(OrderDetailVegetableModel vegetable) {
+            moneyTxt.setText("￥"+vegetable.getProductPrice());
+            numTxt.setText("x"+vegetable.getStock());
+            nameTxt.setText(vegetable.getProductName());
         }
     }
 }

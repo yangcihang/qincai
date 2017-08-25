@@ -374,7 +374,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
                     android:layout_marginLeft="@dimen/len_12"
-                    android:text="@string/remark"
+                    android:text="@string/addOn"
                     android:textColor="@color/textDark"
                     android:textSize="@dimen/font_16" />
 

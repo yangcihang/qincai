@@ -2,11 +2,9 @@ package io.github.vzer.factory.presenter.order;
 
 import java.util.List;
 
-import io.github.vzer.common.factory.data.DataCallback;
 import io.github.vzer.common.factory.presenter.BasePresenter;
-import io.github.vzer.factory.data.OrderDetailHelper;
-import io.github.vzer.factory.model.order.DiscussModel;
-import io.github.vzer.factory.model.order.OrderDetailModel;
+import io.github.vzer.factory.data.OrderHelper;
+import io.github.vzer.factory.model.order.OrderModel;
 
 /**
  * @author YangCihang
@@ -15,7 +13,7 @@ import io.github.vzer.factory.model.order.OrderDetailModel;
  */
 
 public class OrderPresenter extends BasePresenter<OrderContract.View>
-        implements OrderContract.Presenter, DataCallback.Callback<List<OrderDetailModel>> {
+        implements OrderContract.Presenter {
     /**
      * P层构造方法;
      * 创建P层时就进行双向绑定
@@ -27,41 +25,37 @@ public class OrderPresenter extends BasePresenter<OrderContract.View>
     }
 
     /**
-     * 获取订单详情的数据源
+     * 获取所有订单
      */
     @Override
-    public void loadOrderDetails() {
-        //开启p层方法(progressBar)
-        start();
-        OrderDetailHelper.getOrderDetailRequest(this);
+    public void loadAllOrder(int page, int rows) {
+        OrderHelper.getAllOrderList(page, rows, this);
     }
 
     /**
-     * 发送发表评价的请求
+     * 获取未支付订单
      */
     @Override
-    public void sendDiscussRequest(DiscussModel discussModel) {
-        OrderDetailHelper.sendDiscussRequest(discussModel, this);
+    public void loadNoPaymentOrder(int page, int rows) {
+        OrderHelper.getNoPaymentOrderList(page, rows, this);
     }
 
     /**
-     * M层数据失败时回调
-     *
-     * @param error error code
+     * 获取已完成订单
      */
     @Override
-    public void onFailedLoaded(int error) {
+    public void loadCompleteOrder(int page, int rows) {
+        OrderHelper.getCompleteOrderList(page, rows, this);
 
     }
 
     /**
-     * M层数据加载成功时
-     *
-     * @param orderDetailModelList dataSource
+     * 获取未取货订单
      */
     @Override
-    public void onDataLoaded(List<OrderDetailModel> orderDetailModelList) {
-        mView.loadOrderDetailListSuccess(orderDetailModelList);
+    public void loadNoPickOder(int page, int rows) {
+        OrderHelper.getNoPickOrderList(page, rows, this);
+
     }
 
     /**
@@ -71,4 +65,17 @@ public class OrderPresenter extends BasePresenter<OrderContract.View>
         // TODO: 17/8/7 通知v层跳转
     }
 
+    /**
+     * 数据加载成功时
+     */
+    public void onDataLoadSuccess(List<OrderModel> models, boolean isLastPage) {
+        mView.loadOrderListSuccess(models, isLastPage);
+    }
+
+    /**
+     * 数据加载失败时
+     */
+    public void onDataLoadFailed() {
+        mView.loadOrderListFailed();
+    }
 }

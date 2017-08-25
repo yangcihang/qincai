@@ -13,6 +13,9 @@ import io.github.vzer.common.app.ToolbarActivityPresenter;
 import io.github.vzer.factory.model.order.DiscussModel;
 import io.github.vzer.factory.model.order.DiscussVegetableModel;
 import io.github.vzer.factory.model.order.OrderDetailModel;
+import io.github.vzer.factory.model.order.OrderModel;
+import io.github.vzer.factory.presenter.order.DiscussContract;
+import io.github.vzer.factory.presenter.order.DiscussPresenter;
 import io.github.vzer.factory.presenter.order.OrderContract;
 import io.github.vzer.factory.presenter.order.OrderPresenter;
 import io.github.vzer.factory.utils.ToastUtil;
@@ -25,8 +28,8 @@ import io.github.vzer.sharevegetable.order.adapter.DiscussVegetableAdapter;
  * email yangcihang@hrsoft.net
  */
 
-public class DiscussActivity extends ToolbarActivityPresenter<OrderContract.Presenter>
-        implements OrderContract.View {
+public class DiscussActivity extends ToolbarActivityPresenter<DiscussContract.Presenter>
+        implements DiscussContract.View {
     @BindView(R.id.rec_discuss_vegetable)
     RecyclerView vegetableRec;
     @BindView(R.id.txt_submit_discuss)
@@ -43,15 +46,6 @@ public class DiscussActivity extends ToolbarActivityPresenter<OrderContract.Pres
 
     }
 
-    @Override
-    public void loadOrderDetailListSuccess(List<OrderDetailModel> orderDetailModelList) {
-
-    }
-
-    @Override
-    public OrderContract.Presenter initPresenter() {
-        return new OrderPresenter(this);
-    }
 
     @Override
     protected void initData() {
@@ -94,9 +88,24 @@ public class DiscussActivity extends ToolbarActivityPresenter<OrderContract.Pres
         }
         if (canSendRequest) {
             discussModel.setVegetableModelList(vegetableList);
-            mPresenter.sendDiscussRequest(discussModel);
+            mPresenter.requestDiscussModel(discussModel);
         } else {
             ToastUtil.showToast(R.string.toast_please_choose_satisfation);
         }
+    }
+
+    @Override
+    public void loadOrderListSuccess() {
+
+    }
+
+    @Override
+    public void loadOrderListFailed() {
+
+    }
+
+    @Override
+    public DiscussContract.Presenter initPresenter() {
+        return new DiscussPresenter(this);
     }
 }

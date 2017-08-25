@@ -11,79 +11,74 @@ import java.util.List;
 
 public class OrderDetailModel implements Serializable {
 
-    public static final int STATE_SUBMIT = 0x12;
-    public static final int STATE_DISTRIBUTE = 0x1234;
-    public static final int STATE_FINISH = 0x12345;
-    private int orderId; //订单id
-    private long createTime; //创建时间
-    private long receiveTime;//收货时间
-    private int totalPrice; //总金额
-    private String place; //收货地点
-    private String remark; //备注
-    private List<OrderDetailVegetableModel> pList;//商品列表
-    private int state; //订单状态
+    public static final int STATE_SUBMIT = 0;
+    public static final int STATE_DISTRIBUTE = 1;
+    public static final int STATE_FINISH = 2;
 
-    public int getOrderId() {
+    private String orderId; //订单id
+    private long createdAt; //创建时间
+    private double total; //总金额
+    private List<OrderDetailVegetableModel> productList;//商品列表
+    private String addOn; //备注
+    private int status; //订单状态
+
+    private String place; //收货地点
+
+    public String getOrderId() {
         return orderId;
     }
 
-    public long getCreateTime() {
-        return createTime;
+    public long getCreatedAt() {
+        return createdAt;
     }
 
-    public long getReceiveTime() {
-        return receiveTime;
-    }
 
-    public int getTotalPrice() {
-        return totalPrice;
+    public double getTotal() {
+        return total;
     }
 
     public String getPlace() {
         return place;
     }
 
-    public String getRemark() {
-        return remark;
+    public String getAddOn() {
+        return addOn;
     }
 
-    public List<OrderDetailVegetableModel> getpList() {
-        return pList;
+    public List<OrderDetailVegetableModel> getProductList() {
+        return productList;
     }
 
-    public int getState() {
-        return state;
+    public int getStatus() {
+        return status;
     }
 
-    public void setOrderId(int orderId) {
+    public void setOrderId(String  orderId) {
         this.orderId = orderId;
     }
 
-    public void setCreateTime(long createTime) {
-        this.createTime = createTime;
+    public void setCreatedAt(long createdAt) {
+        this.createdAt = createdAt;
     }
 
-    public void setReceiveTime(long receiveTime) {
-        this.receiveTime = receiveTime;
-    }
 
-    public void setTotalPrice(int totalPrice) {
-        this.totalPrice = totalPrice;
+    public void setTotal(double total) {
+        this.total = total;
     }
 
     public void setPlace(String place) {
         this.place = place;
     }
 
-    public void setRemark(String remark) {
-        this.remark = remark;
+    public void setAddOn(String addOn) {
+        this.addOn = addOn;
     }
 
-    public void setpList(List<OrderDetailVegetableModel> pList) {
-        this.pList = pList;
+    public void setProductList(List<OrderDetailVegetableModel> productList) {
+        this.productList = productList;
     }
 
-    public void setState(int state) {
-        this.state = state;
+    public void setStatus(int status) {
+        this.status = status;
     }
 }

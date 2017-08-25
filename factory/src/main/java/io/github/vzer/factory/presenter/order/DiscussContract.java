@@ -9,24 +9,18 @@ import io.github.vzer.factory.model.order.OrderModel;
 
 /**
  * @author YangCihang
- * @since 17/7/27.
+ * @since 17/8/23.
  * email yangcihang@hrsoft.net
  */
 
-public interface OrderContract {
+public interface DiscussContract {
     interface View extends BaseContract.View<Presenter> {
-        void loadOrderListSuccess(List<OrderModel> orderDetailModelList,boolean isLastPage);
+        void loadOrderListSuccess();
+
         void loadOrderListFailed();
     }
 
     interface Presenter extends BaseContract.Presenter {
-        // TODO: 17/8/4 发送请求订单信息 
-        void loadAllOrder(int page, int rows);
-
-        void loadNoPaymentOrder(int page, int rows);
-
-        void loadCompleteOrder(int page, int rows);
-
-        void loadNoPickOder(int page, int rows);
+        void requestDiscussModel(DiscussModel model);
     }
 }

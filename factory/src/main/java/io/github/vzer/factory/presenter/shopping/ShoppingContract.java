@@ -14,6 +14,7 @@ public interface ShoppingContract {
         //创建订单成功
         void CreateOrderSuccess();
     }
+
     interface Presenter extends BaseContract.Presenter {
         //发送创建订单请求
         void CreateOrder(ShoppingOrderModel orderModel);

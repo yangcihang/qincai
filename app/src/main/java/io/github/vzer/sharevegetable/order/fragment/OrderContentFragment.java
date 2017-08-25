@@ -10,13 +10,14 @@ import android.view.View;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ThreadPoolExecutor;
 
 import butterknife.BindView;
 import io.github.vzer.common.app.FragmentPresenter;
 import io.github.vzer.common.widget.recycler.RecyclerFooterAdapter;
 import io.github.vzer.common.widget.recycler.RecyclerScrollListener;
-import io.github.vzer.factory.constant.KeyConstant;
 import io.github.vzer.factory.model.order.OrderDetailModel;
+import io.github.vzer.factory.model.order.OrderModel;
 import io.github.vzer.factory.presenter.order.OrderContract;
 import io.github.vzer.factory.presenter.order.OrderPresenter;
 import io.github.vzer.factory.utils.ToastUtil;
@@ -46,8 +47,10 @@ public class OrderContentFragment extends FragmentPresenter<OrderContract.Presen
     SwipeRefreshLayout refreshLayout;
 
     private OrderContentListAdapter adapter;
-    private List<OrderDetailModel> contentList;
-    private RecyclerScrollListener scrollListener;
+    private List<OrderModel> contentList;
+    private int page = 1; //页数
+    private final int rows = 8; //默认一页8条
+    private boolean isLastPage = false;
 
     public OrderContentFragment(int pagerType) {
         this.pagerType = pagerType;
@@ -55,21 +58,9 @@ public class OrderContentFragment extends FragmentPresenter<OrderContract.Presen
 
     @Override
     protected void initData() {
-        // TODO: 17/8/3 根据不同页面来请求不同数据
-        switch (pagerType) {
-            case PAGER_ALL:
-                mPresenter.loadOrderDetails();
-                break;
-            case PAGER_NO_PAYMENT:
-                break;
-            case PAGER_NO_PICK_UP:
-                break;
-            case PAGER_COMPLETE:
-                break;
-            default:
-                break;
-        }
+        requestDataList();
     }
+
 
     @Override
     protected void initWidget(View root) {
@@ -81,10 +72,14 @@ public class OrderContentFragment extends FragmentPresenter<OrderContract.Presen
                 Utility.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        // TODO: 17/8/4 下拉刷新数据源
-                        ToastUtil.showToast("测试中");
-                        refreshLayout.setRefreshing(false);
+//                        if (!refreshLayout.isRefreshing()) {
+                        isLastPage = false;
+                        page = 1;
+                        //清空数据列表
+                        refreshLayout.setRefreshing(true);
                         adapter.setToRefresh(true);
+                        requestDataList();
+//                        }
                     }
                 });
             }
@@ -106,16 +101,6 @@ public class OrderContentFragment extends FragmentPresenter<OrderContract.Presen
 
     }
 
-    /**
-     * 从网络请求获取数据成功时回调
-     *
-     * @param orderDetailModelList dataSource
-     */
-    @Override
-    public void loadOrderDetailListSuccess(List<OrderDetailModel> orderDetailModelList) {
-        // TODO: 17/8/4 加载adapter，刷新数据源
-    }
-
     @Override
     protected OrderContract.Presenter initPresenter() {
         return new OrderPresenter(this);
@@ -125,35 +110,80 @@ public class OrderContentFragment extends FragmentPresenter<OrderContract.Presen
      * 初始化控件
      */
     private void initList() {
-        scrollListener = new RecyclerScrollListener();
+        RecyclerScrollListener scrollListener = new RecyclerScrollListener();
         contentList = new ArrayList<>();
-        for (int i = 0; i < 10; i++) {
-            contentList.add(new OrderDetailModel());
-        }
         adapter = new OrderContentListAdapter(getActivity(), contentList);
-        LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
-        recyclerView.setLayoutManager(layoutManager);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         recyclerView.setAdapter(adapter);
-        adapter.setOnItemClickedListener(new RecyclerFooterAdapter.OnItemClicked<OrderDetailModel>() {
+        //Item点击事件
+        adapter.setOnItemClickedListener(new RecyclerFooterAdapter.OnItemClicked<OrderModel>() {
             @Override
-            public void onItemClicked(OrderDetailModel model, RecyclerFooterAdapter.ViewHolder holder) {
-                Intent intent = new Intent(getContext(), OrderDetailActivity.class);
-                intent.putExtra(KeyConstant.KEY_ORDER_DETAIL, model);
-                startActivity(new Intent(getContext(), OrderDetailActivity.class));
+            public void onItemClicked(OrderModel orderModel, RecyclerFooterAdapter.ViewHolder holder) {
+                OrderDetailActivity.start(getContext(), orderModel.getOrderId(), orderModel.getStatus());
             }
         });
+        //滑动监听
         recyclerView.setOnScrollListener(scrollListener);
         scrollListener.setScrolledToLastListener(new RecyclerScrollListener.OnScrolledToLast() {
             @Override
             public void onScrolledToLast(int position) {
-                Utility.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        adapter.setToRefresh(false);
-                    }
-                }, 300);
+                if (!isLastPage && !refreshLayout.isRefreshing()) {
+                    requestDataList();
+                }
             }
         });
     }
 
+    /**
+     * 发送网络请求
+     */
+    private void requestDataList() {
+        switch (pagerType) {
+            case PAGER_ALL:
+                mPresenter.loadAllOrder(page, rows);
+                break;
+            case PAGER_NO_PAYMENT:
+                mPresenter.loadNoPaymentOrder(page, rows);
+                break;
+            case PAGER_NO_PICK_UP:
+                mPresenter.loadNoPickOder(page, rows);
+                break;
+            case PAGER_COMPLETE:
+                mPresenter.loadCompleteOrder(page, rows);
+                break;
+            default:
+                ToastUtil.showToast(R.string.toast_logic_error);
+                break;
+        }
+    }
+
+    /**
+     * 网络请求数据加载成功时回调
+     */
+    @Override
+    public void loadOrderListSuccess(List<OrderModel> orderModelList, boolean isLastPage) {
+        if (orderModelList != null && !orderModelList.isEmpty()) {
+            if (page == 1) {
+                adapter.setData(orderModelList);
+            } else {
+                adapter.addAll(orderModelList);
+            }
+        } else {
+            adapter.setToRefresh(false);
+        }
+        this.isLastPage = isLastPage;
+        if (isLastPage) {
+            adapter.setToRefresh(false);
+        }
+        refreshLayout.setRefreshing(false);
+    }
+
+    /**
+     * 网络请求加载数据失败时
+     */
+    @Override
+    public void loadOrderListFailed() {
+        refreshLayout.setRefreshing(false);
+        adapter.setToRefresh(false);
+    }
 }
